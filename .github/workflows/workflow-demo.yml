@@ -9,6 +9,7 @@ permissions:
 env:
   AWS_REGION: us-east-1
   AWS_IAM_ROLE: arn:aws:iam::237110372189:role/GitHubAction-AssumeRoleWithAction
+  IMAGE: sample-app:${{ github.sha }}
 
 jobs:
   test-aws-access:
@@ -39,13 +40,15 @@ jobs:
           REPOSITORY: sample-app
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $REPOSITORY:$IMAGE_TAG .
-          docker tag $REPOSITORY:$IMAGE_TAG $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
-          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
+          docker build -t $IMAGE .
+          docker tag $IMAGE $REGISTRY/$REGISTRY_ALIAS/$IMAGE
+          docker push $REGISTRY/$REGISTRY_ALIAS/$IMAGE
   deploy:
     needs:
       - test-aws-access
     runs-on: ubuntu-latest
+    env:
+      TF_task_image: ${{ env.IMAGE_TAG }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v1
@@ -61,5 +64,8 @@ jobs:
         working-directory: ./terraform/ecs-service
 
       - id: plan
+        working-directory: ./terraform/ecs-service
+        run: terraform plan -no-color -var-file=poc-env.tfvars
+      - id: apply
         working-directory: ./terraform/ecs-service
         run: terraform plan -no-color -var-file=poc-env.tfvars

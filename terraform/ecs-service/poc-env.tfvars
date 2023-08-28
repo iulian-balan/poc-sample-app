@@ -1,7 +1,6 @@
 region                    = "us-east-1"
 task_family               = "sample-app-task-family"
 task_name                 = "sample-app"
-task_image                = "nginx:latest"
 service_name              = "sample-app"
 cluster_arn               = "arn:aws:ecs:us-east-1:237110372189:cluster/test-ecs-cluster"
 desired_count             = 1
