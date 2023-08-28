@@ -48,7 +48,7 @@ jobs:
       - test-aws-access
     runs-on: ubuntu-latest
     env:
-      TF_task_image: ${{ env.IMAGE_TAG }}
+      TF_task_image: ${{ env.IMAGE }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v1
