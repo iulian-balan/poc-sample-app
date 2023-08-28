@@ -25,6 +25,7 @@ jobs:
       - name: Get caller identity
         run: aws sts get-caller-identity
       - name: build
+        working-directory: ./app
         env:
           REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
           REGISTRY_ALIAS: t6y6o8s3
@@ -47,6 +48,5 @@ jobs:
           REPOSITORY: sample-app
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          cd app
           docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
