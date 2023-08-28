@@ -66,7 +66,7 @@ jobs:
 
       - id: plan
         working-directory: ./terraform/ecs-service
-        run: TF_task_image=${{ env.IMAGE }} terraform plan -no-color -var-file=poc-env.tfvars
+        run: TF_VAR_task_image=${{ env.IMAGE }} terraform plan -no-color -var-file=poc-env.tfvars
       - id: apply
         working-directory: ./terraform/ecs-service
         run: terraform apply -no-color -var-file=poc-env.tfvars
