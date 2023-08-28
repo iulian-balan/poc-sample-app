@@ -1,0 +1,29 @@
+name: dev-deployment
+
+on:
+  push
+
+permissions:
+      id-token: write 
+      contents: read
+
+env:
+  AWS_REGION: us-east-1
+  AWS_IAM_ROLE: arn:aws:iam::237110372189:role/GitHubAction-AssumeRoleWithAction
+
+jobs:
+  test-aws-access:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v3
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ env.AWS_IAM_ROLE }}
+          role-session-name: assumerolesession
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Get caller identity
+        run: aws sts get-caller-identity
+      - name: Test access to S3
+        run: aws s3 ls
