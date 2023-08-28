@@ -1,5 +1,5 @@
 module "ecs-service" {
-  source = "git@github.com:iulian-balan/poc-terraform-modules.git"
+  source = "github.com/iulian-balan/poc-terraform-modules"
 
   task_family           = var.task_family
   task_name             = var.task_name
