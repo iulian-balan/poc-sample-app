@@ -10,7 +10,7 @@ env:
   AWS_REGION: us-east-1
   AWS_IAM_ROLE: arn:aws:iam::237110372189:role/GitHubAction-AssumeRoleWithAction
   IMAGE: sample-app:${{ github.sha }}
-  TF_VAR_task_image: sample-app:${{ github.sha }}
+  TF_VAR_task_image: public.ecr.aws/t6y6o8s3/sample-app:${{ github.sha }}
 
 jobs:
   test-aws-access:
