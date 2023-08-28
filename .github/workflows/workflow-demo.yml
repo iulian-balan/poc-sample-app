@@ -45,6 +45,8 @@ jobs:
           docker tag $IMAGE $REGISTRY/$REGISTRY_ALIAS/$IMAGE
           docker push $REGISTRY/$REGISTRY_ALIAS/$IMAGE
   deploy:
+    env:
+      TF_LOG: DEBUG
     needs:
       - test-aws-access
     runs-on: ubuntu-latest
@@ -67,4 +69,4 @@ jobs:
         run: terraform plan -no-color -var-file=poc-env.tfvars
       - id: apply
         working-directory: ./terraform/ecs-service
-        run: terraform plan -no-color -var-file=poc-env.tfvars
+        run: terraform apply -no-color -var-file=poc-env.tfvars
