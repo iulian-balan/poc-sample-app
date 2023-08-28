@@ -10,6 +10,7 @@ env:
   AWS_REGION: us-east-1
   AWS_IAM_ROLE: arn:aws:iam::237110372189:role/GitHubAction-AssumeRoleWithAction
   IMAGE: sample-app:${{ github.sha }}
+  TF_task_image: sample-app:${{ github.sha }}
 
 jobs:
   test-aws-access:
@@ -47,8 +48,6 @@ jobs:
     needs:
       - test-aws-access
     runs-on: ubuntu-latest
-    env:
-      TF_task_image: ${{ env.IMAGE }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v1
