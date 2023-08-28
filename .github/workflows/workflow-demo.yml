@@ -47,5 +47,6 @@ jobs:
           REPOSITORY: sample-app
           IMAGE_TAG: ${{ github.sha }}
         run: |
+          cd app
           docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
