@@ -9,17 +9,17 @@ environment_variables     = [{ "name" : "ENV_NAME", "value" : "test-env" }]
 
 task_port_mappings = [
   {
-    containerPort = 8080
-    hostPort      = 8080
+    containerPort = 3000
+    hostPort      = 3000
   }
 ]
 
 tags = {
-  Env  = "test-env"
+  Env = "test-env"
 }
 
 network_configuration = {
-  subnets = ["subnet-0880f807"]
-  security_groups = []
-  assign_public_ip = false
+  subnets          = ["subnet-0880f807"]
+  security_groups  = ["sg-8c5a51c0"]
+  assign_public_ip = true
 }
