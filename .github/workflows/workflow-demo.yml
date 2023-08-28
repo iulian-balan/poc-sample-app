@@ -42,3 +42,20 @@ jobs:
           docker build -t $REPOSITORY:$IMAGE_TAG .
           docker tag $REPOSITORY:$IMAGE_TAG $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
+  deploy:
+    defaults:
+      run:
+        working-directory: terraform
+    needs:
+      - test-aws-access
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v1
+
+      - uses: hashicorp/setup-terraform@v2
+
+      - run: terraform init
+
+      - id: plan
+        run: terraform plan -no-color
