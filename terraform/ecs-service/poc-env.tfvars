@@ -20,6 +20,6 @@ tags = {
 
 network_configuration = {
   subnets          = ["subnet-0880f807"]
-  security_groups  = ["sg-8c5a51c0"]
-  assign_public_ip = true
+  security_groups  = []
+  assign_public_ip = false
 }
