@@ -67,4 +67,4 @@ jobs:
         run: terraform plan -no-color -var-file=poc-env.tfvars
       - id: apply
         working-directory: ./terraform/ecs-service
-        run: terraform apply -no-color -var-file=poc-env.tfvars
+        run: TF_LOG=DEBUG terraform apply -no-color -var-file=poc-env.tfvars
