@@ -1,11 +1,10 @@
 name: dev-deployment
 
-on:
-  push
+on: push
 
 permissions:
-      id-token: write 
-      contents: read
+  id-token: write
+  contents: read
 
 env:
   AWS_REGION: us-east-1
@@ -25,5 +24,19 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: Get caller identity
         run: aws sts get-caller-identity
-      - name: Test access to S3
-        run: aws s3 ls
+      - name: Login to Amazon ECR Public
+        id: login-ecr-public
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
+          registry-type: public
+
+      - name: Build, tag, and push docker image to Amazon ECR Public
+        env:
+          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
+          REGISTRY_ALIAS: my-ecr-public-registry-alias
+          REPOSITORY: sample-app
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
