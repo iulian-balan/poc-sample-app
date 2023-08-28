@@ -53,8 +53,8 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
 
       - run: terraform init
-        working-directory: terraform
+        working-directory: ./terraform
 
       - id: plan
-        working-directory: terraform
+        working-directory: ./terraform
         run: terraform plan -no-color
