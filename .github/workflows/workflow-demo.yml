@@ -11,7 +11,8 @@ env:
   AWS_IAM_ROLE: arn:aws:iam::237110372189:role/GitHubAction-AssumeRoleWithAction
   TF_STATE_S3_BUCKET: poc-tf-state-files
   TF_STATE_S3_KEY: poc-ecs/ecs-service.tfstate
-
+  DOCKER_REGISTRY_ALIAS: t6y6o8s3
+  DOCKER_REPOSITORY: sample-app
 
 jobs:
   set-env:
@@ -21,20 +22,24 @@ jobs:
     outputs:
       aws_role: ${{ env.AWS_IAM_ROLE }}
       aws_region: ${{ env.AWS_REGION }}
+      repository: ${{ env.DOCKER_REPOSITORY }}
+      registry_alias: ${{ env.DOCKER_REGISTRY_ALIAS }}
 
-  main:
+  build:
     needs: set-env
     uses: ./.github/workflows/build-workflow.yml
     with:
       aws_role: ${{ needs.set-env.outputs.aws_role }}
       aws_region: ${{ needs.set-env.outputs.aws_region }}
-      repository: sample-app
-      registry_alias: t6y6o8s3
+      repository: ${{ needs.set-env.outputs.repository }}
+      registry_alias: ${{ needs.set-env.outputs.registry_alias }}
 
   deploy:
     needs:
-      - main
+      - build
     runs-on: ubuntu-latest
+    env:
+      TF_VAR_task_image: public.ecr.aws/${{ needs.set-env.outputs.registry_alias }}/${{ needs.set-env.outputs.repository }}:${{ github.sha }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v1
@@ -45,8 +50,6 @@ jobs:
           role-session-name: assumerolesession
           aws-region: ${{ env.AWS_REGION }}
       - name: Terraform plan
-        env:
-          TF_VAR_task_image: public.ecr.aws/t6y6o8s3/sample-app:${{ github.sha }}
         uses: iulian-balan/poc-github-worflows/terraform/terraform-plan@main
         with:
           aws-region: ${{ env.AWS_REGION }}
@@ -56,8 +59,6 @@ jobs:
           var-file: poc-env.tfvars
 
       - name: Terraform apply
-        env:
-          TF_VAR_task_image: public.ecr.aws/t6y6o8s3/sample-app:${{ github.sha }}
         uses: iulian-balan/poc-github-worflows/terraform/terraform-apply@main
         with:
           aws-region: ${{ env.AWS_REGION }}
