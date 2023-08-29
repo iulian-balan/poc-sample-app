@@ -26,8 +26,8 @@ jobs:
     needs: set-env
     uses: ./.github/workflows/build-workflow.yml
     with:
-      aws_role: ${{ needs.set-env.aws_role }}
-      aws_region: ${{ needs.set-env.aws_region }}
+      aws_role: ${{ needs.set-env.outputs.aws_role }}
+      aws_region: ${{ needs.set-env.outputs.aws_region }}
       repository: sample-app
       registry_alias: t6y6o8s3
 
