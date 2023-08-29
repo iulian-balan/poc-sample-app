@@ -15,6 +15,7 @@ env:
 
 jobs:
   set-env:
+    runs-on: ubuntu-latest
     steps:
       - run: echo "Setting env variables"
     outputs:
