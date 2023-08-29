@@ -14,11 +14,17 @@ env:
 
 
 jobs:
-  main:
-    uses: ./.github/workflows/build-workflow.yml
-    with:
+  set-env:
+    outputs:
       aws_role: ${{ env.AWS_IAM_ROLE }}
       aws_region: ${{ env.AWS_REGION }}
+
+  main:
+    needs: set-env
+    uses: ./.github/workflows/build-workflow.yml
+    with:
+      aws_role: ${{ needs.set-env.aws_role }}
+      aws_region: ${{ needs.set-env.aws_region }}
       repository: sample-app
       registry_alias: t6y6o8s3
 
@@ -40,9 +46,9 @@ jobs:
           TF_VAR_task_image: public.ecr.aws/t6y6o8s3/sample-app:${{ github.sha }}
         uses: iulian-balan/poc-github-worflows/terraform/terraform-plan@main
         with:
-          aws-region: ${{ AWS_REGION }}
-          s3-bucket: ${{ TF_STATE_S3_BUCKET }}
-          s3-key: ${{ TF_STATE_S3_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+          s3-bucket: ${{ env.TF_STATE_S3_BUCKET }}
+          s3-key: ${{ env.TF_STATE_S3_KEY }}
           working-dir: ./terraform/ecs-service
           var-file: poc-env.tfvars
 
@@ -51,8 +57,8 @@ jobs:
           TF_VAR_task_image: public.ecr.aws/t6y6o8s3/sample-app:${{ github.sha }}
         uses: iulian-balan/poc-github-worflows/terraform/terraform-apply@main
         with:
-          aws-region: ${{ AWS_REGION }}
-          s3-bucket: ${{ TF_STATE_S3_BUCKET }}
-          s3-key: ${{ TF_STATE_S3_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+          s3-bucket: ${{ env.TF_STATE_S3_BUCKET }}
+          s3-key: ${{ env.TF_STATE_S3_KEY }}
           working-dir: ./terraform/ecs-service
           var-file: poc-env.tfvars
