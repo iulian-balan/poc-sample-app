@@ -72,3 +72,7 @@ variable "tags" {
 variable "environment_variables" {
   type = list(map(any))
 }
+
+variable "service_wait_for_steady_state" {
+  type = bool
+}

@@ -16,6 +16,7 @@ module "ecs-service" {
   service_capacity_provider        = var.service_capacity_provider
   service_capacity_provider_base   = var.service_capacity_provider_base
   service_capacity_provider_weight = var.service_capacity_provider_weight
+  service_wait_for_steady_state    = var.service_wait_for_steady_state
 
   tags = var.tags
 }
