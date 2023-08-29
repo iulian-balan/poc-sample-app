@@ -17,8 +17,8 @@ jobs:
   main:
     uses: ./.github/workflows/build-workflow.yml
     with:
-      aws_role: ${{ AWS_IAM_ROLE }}
-      aws_region: ${{ AWS_IAM_ROLE }}
+      aws_role: ${{ env.AWS_IAM_ROLE }}
+      aws_region: ${{ env.AWS_IAM_ROLE }}
       repository: sample-app
       registry_alias: t6y6o8s3
 
