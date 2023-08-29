@@ -9,41 +9,19 @@ permissions:
 env:
   AWS_REGION: us-east-1
   AWS_IAM_ROLE: arn:aws:iam::237110372189:role/GitHubAction-AssumeRoleWithAction
-  IMAGE: sample-app:${{ github.sha }}
-  TF_VAR_task_image: public.ecr.aws/t6y6o8s3/sample-app:${{ github.sha }}
+  TF_STATE_S3_BUCKET: poc-tf-state-files
+  TF_STATE_S3_KEY: poc-ecs/ecs-service.tfstate
+
 
 jobs:
-  test-aws-access:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git clone the repository
-        uses: actions/checkout@v3
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ env.AWS_IAM_ROLE }}
-          role-session-name: assumerolesession
-          aws-region: ${{ env.AWS_REGION }}
-      - name: Get caller identity
-        run: aws sts get-caller-identity
-      - name: Login to Amazon ECR Public
-        id: login-ecr-public
-        uses: aws-actions/amazon-ecr-login@v1
-        with:
-          mask-password: 'true'
-          registry-type: public
+  main:
+    uses: ./.github/workflows/build-workflow.yml
+    with:
+      aws_role: ${{ AWS_IAM_ROLE }}
+      aws_region: ${{ AWS_IAM_ROLE }}
+      repository: sample-app
+      registry_alias: t6y6o8s3
 
-      - name: Build, tag, and push docker image to Amazon ECR Public
-        working-directory: ./app
-        env:
-          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
-          REGISTRY_ALIAS: t6y6o8s3
-          REPOSITORY: sample-app
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $IMAGE .
-          docker tag $IMAGE $REGISTRY/$REGISTRY_ALIAS/$IMAGE
-          docker push $REGISTRY/$REGISTRY_ALIAS/$IMAGE
   deploy:
     needs:
       - test-aws-access
@@ -57,14 +35,24 @@ jobs:
           role-to-assume: ${{ env.AWS_IAM_ROLE }}
           role-session-name: assumerolesession
           aws-region: ${{ env.AWS_REGION }}
-      - uses: hashicorp/setup-terraform@v2
+      - name: Terraform plan
+        env:
+          TF_VAR_task_image: public.ecr.aws/t6y6o8s3/sample-app:${{ github.sha }}
+        uses: iulian-balan/poc-github-worflows/terraform/terraform-plan@main
+        with:
+          aws-region: ${{ AWS_REGION }}
+          s3-bucket: ${{ TF_STATE_S3_BUCKET }}
+          s3-key: ${{ TF_STATE_S3_KEY }}
+          working-dir: ./terraform/ecs-service
+          var-file: poc-env.tfvars
 
-      - run: terraform init
-        working-directory: ./terraform/ecs-service
-
-      - id: plan
-        working-directory: ./terraform/ecs-service
-        run: terraform plan -no-color -var-file=poc-env.tfvars
-      - id: apply
-        working-directory: ./terraform/ecs-service
-        run: terraform apply -auto-approve -no-color -var-file=poc-env.tfvars
+      - name: Terraform apply
+        env:
+          TF_VAR_task_image: public.ecr.aws/t6y6o8s3/sample-app:${{ github.sha }}
+        uses: iulian-balan/poc-github-worflows/terraform/terraform-apply@main
+        with:
+          aws-region: ${{ AWS_REGION }}
+          s3-bucket: ${{ TF_STATE_S3_BUCKET }}
+          s3-key: ${{ TF_STATE_S3_KEY }}
+          working-dir: ./terraform/ecs-service
+          var-file: poc-env.tfvars

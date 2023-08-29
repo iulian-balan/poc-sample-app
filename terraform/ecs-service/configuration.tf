@@ -1,9 +1,5 @@
 terraform {
-  backend "s3" {
-    bucket = "poc-tf-state-files"
-    key    = "poc-ecs/ecs-service.tfstate"
-    region = "us-east-1"
-  }
+  backend "s3" {}
 
   required_providers {
     aws = {
