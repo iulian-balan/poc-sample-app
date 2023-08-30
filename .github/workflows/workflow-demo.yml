@@ -35,6 +35,7 @@ jobs:
       registry_alias: ${{ needs.set-env.outputs.registry_alias }}
 
   deploy:
+    environment: prod
     needs:
       - set-env
       - build
