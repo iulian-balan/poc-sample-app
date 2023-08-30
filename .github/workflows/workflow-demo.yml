@@ -10,7 +10,7 @@ env:
   AWS_REGION: us-east-1
   AWS_IAM_ROLE: arn:aws:iam::237110372189:role/GitHubAction-AssumeRoleWithAction
   TF_STATE_S3_BUCKET: poc-tf-state-files
-  TF_STATE_S3_KEY_DEV: poc-ecs/ecs-service.tfstate
+  TF_STATE_S3_KEY_DEV: poc-dev-ecs/ecs-service.tfstate
   TF_STATE_S3_KEY_PROD: poc-prod-ecs/ecs-service.tfstate
   DOCKER_REGISTRY_ALIAS: t6y6o8s3
   DOCKER_REPOSITORY: sample-app
