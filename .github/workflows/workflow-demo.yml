@@ -34,11 +34,46 @@ jobs:
       repository: ${{ needs.set-env.outputs.repository }}
       registry_alias: ${{ needs.set-env.outputs.registry_alias }}
 
-  deploy:
-    environment: prod
+  deploy-dev:
+    environment: dev
     needs:
       - set-env
       - build
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_task_image: public.ecr.aws/${{ needs.set-env.outputs.registry_alias }}/${{ needs.set-env.outputs.repository }}:${{ github.sha }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v1
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ env.AWS_IAM_ROLE }}
+          role-session-name: assumerolesession
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Terraform plan
+        uses: iulian-balan/poc-github-worflows/terraform/terraform-plan@main
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          s3-bucket: ${{ env.TF_STATE_S3_BUCKET }}
+          s3-key: ${{ env.TF_STATE_S3_KEY }}
+          working-dir: ./terraform/ecs-service
+          var-file: poc-env.tfvars
+
+      - name: Terraform apply
+        uses: iulian-balan/poc-github-worflows/terraform/terraform-apply@main
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          s3-bucket: ${{ env.TF_STATE_S3_BUCKET }}
+          s3-key: ${{ env.TF_STATE_S3_KEY }}
+          working-dir: ./terraform/ecs-service
+          var-file: poc-env.tfvars
+
+  deploy-prod:
+    environment: prod
+    needs:
+      - set-env
+      - deploy-dev
     runs-on: ubuntu-latest
     env:
       TF_VAR_task_image: public.ecr.aws/${{ needs.set-env.outputs.registry_alias }}/${{ needs.set-env.outputs.repository }}:${{ github.sha }}
