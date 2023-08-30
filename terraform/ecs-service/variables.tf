@@ -31,14 +31,6 @@ variable "task_port_mappings" {
   }))
 }
 
-variable "network_configuration" {
-  type = object({
-    subnets          = list(string)
-    security_groups  = list(string)
-    assign_public_ip = bool
-  })
-}
-
 variable "service_name" {
 
 }

@@ -18,9 +18,3 @@ task_port_mappings = [
 tags = {
   Env = "test-env"
 }
-
-network_configuration = {
-  subnets          = ["subnet-0880f807"]
-  security_groups  = []
-  assign_public_ip = false
-}
