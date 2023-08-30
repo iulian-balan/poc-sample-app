@@ -7,7 +7,6 @@ module "ecs-service" {
   task_cpu              = var.task_cpu
   task_memory           = var.task_memory
   task_port_mappings    = var.task_port_mappings
-  network_configuration = var.network_configuration
   environment_variables = var.environment_variables
 
   service_name                     = var.service_name
