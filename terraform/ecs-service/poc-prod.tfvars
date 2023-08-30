@@ -11,7 +11,7 @@ environment_variables         = [{ "name" : "ENV_NAME", "value" : "test-env" }]
 task_port_mappings = [
   {
     containerPort = 3000
-    hostPort      = 3000
+    hostPort      = 3001
   }
 ]
 
