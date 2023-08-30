@@ -58,7 +58,7 @@ jobs:
           s3-bucket: ${{ env.TF_STATE_S3_BUCKET }}
           s3-key: ${{ env.TF_STATE_S3_KEY }}
           working-dir: ./terraform/ecs-service
-          var-file: poc-env.tfvars
+          var-file: poc-dev.tfvars
 
       - name: Terraform apply
         uses: iulian-balan/poc-github-worflows/terraform/terraform-apply@main
@@ -67,7 +67,7 @@ jobs:
           s3-bucket: ${{ env.TF_STATE_S3_BUCKET }}
           s3-key: ${{ env.TF_STATE_S3_KEY }}
           working-dir: ./terraform/ecs-service
-          var-file: poc-env.tfvars
+          var-file: poc-dev.tfvars
 
   deploy-prod:
     environment: prod
@@ -93,7 +93,7 @@ jobs:
           s3-bucket: ${{ env.TF_STATE_S3_BUCKET }}
           s3-key: ${{ env.TF_STATE_S3_KEY }}
           working-dir: ./terraform/ecs-service
-          var-file: poc-env.tfvars
+          var-file: poc-prod.tfvars
 
       - name: Terraform apply
         uses: iulian-balan/poc-github-worflows/terraform/terraform-apply@main
@@ -102,4 +102,4 @@ jobs:
           s3-bucket: ${{ env.TF_STATE_S3_BUCKET }}
           s3-key: ${{ env.TF_STATE_S3_KEY }}
           working-dir: ./terraform/ecs-service
-          var-file: poc-env.tfvars
+          var-file: poc-prod.tfvars
